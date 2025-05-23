@@ -2,7 +2,7 @@
 import { useSession, signIn, signOut } from "next-auth/react";
 import { useState } from "react";
 
-export default function Home() {
+export default function BugReport() {
   const { data: session } = useSession();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -15,7 +15,7 @@ export default function Home() {
       await fetch("/api/create-issue", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, description, type: "feature" }),
+        body: JSON.stringify({ title, description, type: "bug" }),
       });
       
       // Reset form
@@ -26,7 +26,7 @@ export default function Home() {
       setShowSuccess(true);
       setTimeout(() => setShowSuccess(false), 5000);
     } catch (error) {
-      console.error("Error submitting feature request:", error);
+      console.error("Error submitting bug report:", error);
     } finally {
       setIsSubmitting(false);
     }
@@ -41,19 +41,19 @@ export default function Home() {
               <div className="flex justify-center space-x-1 mb-4">
                 <a
                   href="/"
-                  className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-l-md hover:bg-blue-700 transition-colors"
+                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-l-md hover:bg-gray-200 transition-colors"
                 >
                   Feature Request
                 </a>
                 <a
                   href="/bug"
-                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-r-md hover:bg-gray-200 transition-colors"
+                  className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-r-md hover:bg-red-700 transition-colors"
                 >
                   Bug Report
                 </a>
               </div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">Feature Request</h1>
-              <p className="text-gray-600">Help us improve by suggesting new features</p>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">Bug Report</h1>
+              <p className="text-gray-600">Help us fix issues by reporting bugs</p>
             </div>
 
             {session ? (
@@ -88,10 +88,10 @@ export default function Home() {
                       </div>
                       <div className="ml-3">
                         <p className="text-sm font-medium text-green-800">
-                          Feature request submitted successfully!
+                          Bug report submitted successfully!
                         </p>
                         <p className="text-sm text-green-700 mt-1">
-                          Your request has been added to our GitHub repository for review.
+                          Your bug report has been added to our GitHub repository for review.
                         </p>
                       </div>
                     </div>
@@ -101,13 +101,13 @@ export default function Home() {
                 <form className="space-y-6" onSubmit={(e) => { e.preventDefault(); submitIssue(); }}>
                   <div>
                     <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
-                      Feature Title
+                      Bug Title <span className="text-red-500">*</span>
                     </label>
                     <input
                       id="title"
                       type="text"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                      placeholder="Brief, descriptive title for your feature"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors"
+                      placeholder="Brief summary of the bug"
                       value={title}
                       onChange={(e) => setTitle(e.target.value)}
                       required
@@ -116,13 +116,13 @@ export default function Home() {
 
                   <div>
                     <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
-                      Feature Description
+                      Bug Description <span className="text-red-500">*</span>
                     </label>
                     <textarea
                       id="description"
-                      rows={4}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors resize-none"
-                      placeholder="Describe the feature you'd like to see..."
+                      rows={6}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors resize-none"
+                      placeholder="Describe the bug in detail. Include steps to reproduce, expected behavior, and actual behavior..."
                       value={description}
                       onChange={(e) => setDescription(e.target.value)}
                       required
@@ -132,7 +132,7 @@ export default function Home() {
                   <button
                     type="submit"
                     disabled={isSubmitting || !title || !description}
-                    className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
                     {isSubmitting ? (
                       <div className="flex items-center">
@@ -143,7 +143,7 @@ export default function Home() {
                         Submitting...
                       </div>
                     ) : (
-                      'Submit Feature Request'
+                      'Submit Bug Report'
                     )}
                   </button>
                 </form>
@@ -157,7 +157,7 @@ export default function Home() {
                   </svg>
                 </div>
                 <h3 className="text-lg font-medium text-gray-900 mb-2">Sign in to continue</h3>
-                <p className="text-gray-600 mb-6">Connect with GitHub to submit feature requests</p>
+                <p className="text-gray-600 mb-6">Connect with GitHub to submit bug reports</p>
                 <button 
                   onClick={() => signIn("github")}
                   className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors"

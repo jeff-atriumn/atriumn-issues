@@ -36,30 +36,32 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Not signed in" }, { status: 401 });
   }
 
-  const { title, feature, motivation } = await request.json();
+  const { title, description, type } = await request.json();
   const octokit = new Octokit({ auth: (session as { accessToken?: string }).accessToken });
 
   const [owner, repo] = process.env.GITHUB_REPO!.split("/");
   console.log('Creating issue for:', { owner, repo, title, hasToken: !!(session as { accessToken?: string }).accessToken });
   
-  const templateBody = `## Feature Request
+  const templateBody = type === "bug" 
+    ? `## Bug Report
 
-**What's the feature?**
-${feature}
+${description}
 
-**Why is this important?**
-${motivation}
+**Environment:**
+- Browser: 
+- OS: 
+- Version: `
+    : `## Feature Request
 
-**Additional Context**
-`;
+${description}`;
 
   try {
     await octokit.rest.issues.create({
       owner,
       repo,
-      title: `[Feature] ${title}`,
+      title: type === "bug" ? `[Bug] ${title}` : `[Feature] ${title}`,
       body: templateBody,
-      labels: ["feature", "triage"],
+      labels: type === "bug" ? ["bug", "triage"] : ["feature", "triage"],
     });
   } catch (error) {
     console.error('GitHub API Error:', error);
