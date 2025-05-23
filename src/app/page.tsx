@@ -1,6 +1,7 @@
 "use client";
 import { useSession, signIn, signOut } from "next-auth/react";
 import { useState } from "react";
+import Link from "next/link";
 
 export default function Home() {
   const { data: session } = useSession();
@@ -39,18 +40,18 @@ export default function Home() {
           <div className="px-6 py-8 sm:px-8">
             <div className="text-center mb-8">
               <div className="flex justify-center space-x-1 mb-4">
-                <a
+                <Link
                   href="/"
                   className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-l-md hover:bg-blue-700 transition-colors"
                 >
                   Feature Request
-                </a>
-                <a
+                </Link>
+                <Link
                   href="/bug"
                   className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-r-md hover:bg-gray-200 transition-colors"
                 >
                   Bug Report
-                </a>
+                </Link>
               </div>
               <h1 className="text-3xl font-bold text-gray-900 mb-2">Feature Request</h1>
               <p className="text-gray-600">Help us improve by suggesting new features</p>
