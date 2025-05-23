@@ -1,7 +1,6 @@
 import { Octokit } from "@octokit/rest";
 import { getServerSession } from "next-auth/next";
 import { NextRequest, NextResponse } from "next/server";
-import NextAuth from "next-auth";
 import GitHubProvider from "next-auth/providers/github";
 
 const authOptions = {
@@ -14,13 +13,15 @@ const authOptions = {
     }),
   ],
   callbacks: {
-    async jwt({ token, account }: any) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    async jwt({ token, account }: { token: any; account: any }) {
       if (account) {
         token.accessToken = account.access_token;
       }
       return token;
     },
-    async session({ session, token }: any) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    async session({ session, token }: { session: any; token: any }) {
       return {
         ...session,
         accessToken: token.accessToken,
@@ -39,7 +40,7 @@ export async function POST(request: NextRequest) {
   const octokit = new Octokit({ auth: (session as { accessToken?: string }).accessToken });
 
   const [owner, repo] = process.env.GITHUB_REPO!.split("/");
-  console.log('Creating issue for:', { owner, repo, title, hasToken: !!(session as any).accessToken });
+  console.log('Creating issue for:', { owner, repo, title, hasToken: !!(session as { accessToken?: string }).accessToken });
   
   const templateBody = `## Feature Request
 
@@ -62,7 +63,7 @@ ${motivation}
     });
   } catch (error) {
     console.error('GitHub API Error:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: error instanceof Error ? error.message : 'Unknown error' }, { status: 500 });
   }
 
   return NextResponse.json({ success: true });

@@ -104,7 +104,7 @@ export default function Home() {
 
                   <div>
                     <label htmlFor="feature" className="block text-sm font-medium text-gray-700 mb-2">
-                      What's the feature?
+                      What&apos;s the feature?
                     </label>
                     <input
                       id="feature"
